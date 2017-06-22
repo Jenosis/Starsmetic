@@ -1,5 +1,5 @@
 author = Jenosis
-version = 1.7
+version = 1.7.0.1
 displayName = Furniture, Food, and Fun
 homepage = http://forums.terraria.org/index.php?threads/released-jenosis-cosmetic-variety.17150/
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
