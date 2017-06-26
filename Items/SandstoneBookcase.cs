@@ -1,33 +1,33 @@
 using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 
-namespace CosmeticVariety.Items {
-public class SandstoneBookcase : ModItem
+namespace CosmeticVariety.Tiles {
+public class SandstoneBookcase : ModTile
 {
     public override void SetDefaults()
     {
-        item.width = 28;
-        item.height = 14;
-        item.maxStack = 99;
-        item.useTurn = true;
-        item.autoReuse = true;
-        item.useAnimation = 15;
-        item.useTime = 10;
-        item.useStyle = 1;
-        item.consumable = true;
-        item.value = 150;
-        item.createTile = mod.TileType("SandstoneBookcase");
+        Main.tileFrameImportant[Type] = true;
+		Main.tileSolidTop[Type] = true;
+        Main.tileNoAttach[Type] = true;
+        Main.tileLavaDeath[Type] = true;
+		Main.tileTable[Type] = true;
+        TileObjectData.newTile.CopyFrom(TileObjectData.Style3x4);
+        TileObjectData.addTile(Type);
+        AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
+		dustType = mod.DustType("Pixel");
+		adjTiles = new int[]{TileID.Bookcases};
     }
 
-    public override void AddRecipes()
+    public override void NumDust(int i, int j, bool fail, ref int num)
     {
-        ModRecipe recipe = new ModRecipe(mod);
-        recipe.AddIngredient(ItemID.Sandstone, 20);
-		recipe.AddIngredient(ItemID.Book, 10);
-		recipe.AddTile(106);
-        recipe.SetResult(this);
-        recipe.AddRecipe();
+        num = fail ? 1 : 3;
+    }
+    public override void KillMultiTile(int i, int j, int frameX, int frameY)
+    {
+        Item.NewItem(i * 16, j * 16, 48, 64, mod.ItemType("SandstoneBookcase"));
     }
 }}

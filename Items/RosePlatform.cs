@@ -1,34 +1,49 @@
 using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 
-namespace CosmeticVariety.Items
+
+namespace CosmeticVariety.Tiles
 {
-    public class RosePlatform : ModItem
+    public class RosePlatform : ModTile
     {
         public override void SetDefaults()
         {
-            item.width = 24;
-            item.height = 25;
-            item.maxStack = 999;
-            item.value = 100;
-            item.rare = 1;
-            item.useTurn = true;
-            item.autoReuse = true;
-            item.useAnimation = 15;
-            item.useTime = 10;
-            item.useStyle = 1;
-            item.consumable = true;
-            item.createTile = mod.TileType("RosePlatform");
+            Main.tileLighted[Type] = true;
+			Main.tileFrameImportant[Type] = true;
+			Main.tileSolidTop[Type] = true;
+			Main.tileSolid[Type] = true;
+			Main.tileNoAttach[Type] = true;
+			Main.tileTable[Type] = true;
+			Main.tileLavaDeath[Type] = true;
+			TileID.Sets.Platforms[Type] = true;
+			TileObjectData.newTile.CoordinateHeights = new int[]{ 16 };
+			TileObjectData.newTile.CoordinateWidth = 16;
+			TileObjectData.newTile.CoordinatePadding = 2;
+			TileObjectData.newTile.StyleHorizontal = true;
+			TileObjectData.newTile.StyleMultiplier = 27;
+			TileObjectData.newTile.StyleWrapLimit = 27;
+			TileObjectData.newTile.UsesCustomCanPlace = false;
+			TileObjectData.newTile.LavaDeath = true;
+			TileObjectData.addTile(Type);
+			AddToArray(ref TileID.Sets.RoomNeeds.CountsAsDoor);
+			AddMapEntry(new Color(200, 200, 200));
+			dustType = mod.DustType("Pixel");
+			drop = mod.ItemType("RosePlatform");
+			disableSmartCursor = true;
+			adjTiles = new int[]{ TileID.Platforms };
         }
-        public override void AddRecipes()
+
+        public override void PostSetDefaults()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(null,"RedFlowerBlock", 1);
-            recipe.AddTile(18);
-            recipe.SetResult(this, 2);
-            recipe.AddRecipe();
+            Main.tileNoSunLight[Type] = false;
+        }
+        public override void NumDust(int i, int j, bool fail, ref int num)
+        {
+            num = fail ? 1 : 3;
         }
     }
 }

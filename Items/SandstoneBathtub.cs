@@ -1,32 +1,43 @@
-using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
+using Terraria.DataStructures;
+using Terraria.Enums;
 
-namespace CosmeticVariety.Items {
-public class SandstoneBathtub : ModItem
+namespace CosmeticVariety.Tiles {
+public class SandstoneBathtub : ModTile
 {
     public override void SetDefaults()
     {
-        item.width = 28;
-        item.height = 14;
-        item.maxStack = 99;
-        item.useTurn = true;
-        item.autoReuse = true;
-        item.useAnimation = 15;
-        item.useTime = 10;
-        item.useStyle = 1;
-        item.consumable = true;
-        item.value = 150;
-        item.createTile = mod.TileType("SandstoneBathtub");
+        Main.tileFrameImportant[Type] = true;
+        Main.tileNoAttach[Type] = true;
+        Main.tileLavaDeath[Type] = true;
+        TileObjectData.newTile.CopyFrom(TileObjectData.Style4x2);
+		TileObjectData.newTile.Direction = TileObjectDirection.PlaceLeft;
+        TileObjectData.newTile.StyleWrapLimit = 2;
+        TileObjectData.newTile.StyleMultiplier = 2;
+        TileObjectData.newTile.StyleHorizontal = true;
+        TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
+        TileObjectData.newAlternate.Direction = TileObjectDirection.PlaceRight;
+        TileObjectData.addAlternate(1);
+        TileObjectData.newSubTile.CopyFrom(TileObjectData.newTile);
+        TileObjectData.newSubTile.LinkedAlternates = true;
+        TileObjectData.newSubTile.LavaDeath = false;
+        TileObjectData.newSubTile.LavaPlacement = LiquidPlacement.Allowed;
+        TileObjectData.addSubTile(Type);
+		TileObjectData.addTile(Type);
+		dustType = mod.DustType("Pixel");
+        adjTiles = new int[]{TileID.Bathtubs};
     }
 
-    public override void AddRecipes()
+    public override void NumDust(int i, int j, bool fail, ref int num)
     {
-        ModRecipe recipe = new ModRecipe(mod);
-        recipe.AddIngredient(ItemID.Sandstone, 14);
-		recipe.AddTile(106);
-        recipe.SetResult(this);
-        recipe.AddRecipe();
+        num = fail ? 1 : 3;
+    }
+    public override void KillMultiTile(int i, int j, int frameX, int frameY)
+    {
+        Item.NewItem(i * 16, j * 16, 64, 32, mod.ItemType("SandstoneBathtub"));
     }
 }}

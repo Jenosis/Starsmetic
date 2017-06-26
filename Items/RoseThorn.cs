@@ -1,50 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using Terraria.DataStructures;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 
-namespace CosmeticVariety.Items
+namespace CosmeticVariety.Tiles {
+public class RoseThorn : ModTile
 {
-    public class RoseThorn : ModItem
+    public override void SetDefaults()
     {
-        public override void SetDefaults()
-        {
-            item.CloneDefaults(ItemID.NettleBurst);
-            item.damage = (int)(item.damage * 1.5);
-            item.width = 18;
-            item.height = 18;
-            item.damage = 110;
-            item.magic = true;
-            item.mana = 20;
-            Item.staff[item.type] = true;
-            item.noMelee = true; //so the item's animation doesn't do damage
-            item.knockBack = 5;
-            item.useTime = 10;
-            item.useAnimation = 10;
-            item.value = 10000;
-            item.rare = 2;
-            item.autoReuse = false;
-            item.shootSpeed = 32f;
-        }
-      
-
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(null, "Veridanite", 20);
-            recipe.AddIngredient(null,"Rose",2);
-            recipe.AddIngredient(null, "WeirdlyColoredPetal", 30);
-            recipe.AddTile(null, "AegisContraption");
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-			
-			recipe = new ModRecipe(mod);
-			recipe.AddIngredient(null,"DecorativeRoseThorn", 1);
-			recipe.AddTile(null,"SculptingStand");
-			recipe.SetResult(this, 1);
-			recipe.AddRecipe();
-        }
+        Main.tileFrameImportant[Type] = true;
+        Main.tileNoAttach[Type] = true;
+        Main.tileLavaDeath[Type] = true;
+		animationFrameHeight = 72;
+		TileObjectData.newTile.UsesCustomCanPlace = true;
+        TileObjectData.newTile.Width = 1;
+		TileObjectData.newTile.Height = 4;
+		TileObjectData.newTile.CoordinateHeights = new int[]{ 16, 16,16, 16};
+		TileObjectData.newTile.CoordinateWidth = 16;
+		TileObjectData.newTile.CoordinatePadding = 2;
+		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.Table| AnchorType.SolidTile | AnchorType.SolidWithTop, TileObjectData.newTile.Width, 0);
+        TileObjectData.addTile(Type);
+		dustType = mod.DustType("Pixel");
     }
-}
+	public override void AnimateTile(ref int frame, ref int frameCounter)
+	{
+		frameCounter++;
+		if(frameCounter >= 10) //replace 10 with duration of frame in ticks
+		{
+			frameCounter = 0;
+			frame++;
+			frame %= 16;
+		}
+	}
+    public override void NumDust(int i, int j, bool fail, ref int num)
+    {
+        num = fail ? 1 : 3;
+    }
+    public override void KillMultiTile(int i, int j, int frameX, int frameY)
+    {
+        Item.NewItem(i * 16, j * 16, 32, 64, mod.ItemType("DecorativeRoseThorn"));
+    }
+}}

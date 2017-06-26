@@ -1,36 +1,63 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 
-namespace CosmeticVariety.Items {
-public class SandstoneBed : ModItem
+namespace CosmeticVariety.Tiles {
+public class SandstoneBed : ModTile
 {
     public override void SetDefaults()
     {
-        item.width = 28;
-        item.height = 14;
-        item.maxStack = 99;
-        item.useTurn = true;
-        item.autoReuse = true;
-        item.useAnimation = 15;
-        item.useTime = 10;
-        item.useStyle = 1;
-        item.consumable = true;
-        item.value = 150;
-        item.createTile = mod.TileType("SandstoneBed");
+        Main.tileFrameImportant[Type] = true;
+        Main.tileLavaDeath[Type] = true;
+        TileObjectData.newTile.CopyFrom(TileObjectData.Style4x2); //this style already takes care of direction for us
+        TileObjectData.newTile.CoordinateHeights = new int[]{16, 16};
+        TileObjectData.addTile(Type);
+		AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
+		dustType = mod.DustType("Pixel");
+        adjTiles = new int[]{TileID.Beds};
+        bed = true;
     }
 
-    public override void AddRecipes()
+    public override void NumDust(int i, int j, bool fail, ref int num)
     {
-        ModRecipe recipe = new ModRecipe(mod);
-        recipe.AddIngredient(ItemID.Sandstone, 15);
-		recipe.AddIngredient(ItemID.Silk, 5);
-		recipe.AddTile(106);
-        recipe.SetResult(this);
-        recipe.AddRecipe();
+        num = 1;
+    }
+    public override void KillMultiTile(int i, int j, int frameX, int frameY)
+    {
+        Item.NewItem(i * 16, j * 16, 64, 32, mod.ItemType("SandstoneBed"));
+    }
+    public override void RightClick(int i, int j)
+    {
+        Player player = Main.player[Main.myPlayer];
+        Tile tile = Main.tile[i, j];
+        int spawnX = i - tile.frameX / 18;
+        int spawnY = j + 2;
+        spawnX += tile.frameX >= 72 ? 5 : 2;
+        if(tile.frameY % 38 != 0)
+        {
+            spawnY--;
+        }
+        player.FindSpawn();
+        if(player.SpawnX == spawnX && player.SpawnY == spawnY)
+        {
+            player.RemoveSpawn();
+            Main.NewText("Spawn point removed!", 255, 240, 20, false);
+        }
+        else if(Player.CheckSpawn(spawnX, spawnY))
+        {
+            player.ChangeSpawn(spawnX, spawnY);
+            Main.NewText("Spawn point set!", 255, 240, 20, false);
+        }
+    }
+
+    public override void MouseOver(int i, int j)
+    {
+        Player player = Main.player[Main.myPlayer];
+        player.noThrow = 2;
+        player.showItemIcon = true;
+        player.showItemIcon2 = mod.ItemType("SandstoneBed");
     }
 }}

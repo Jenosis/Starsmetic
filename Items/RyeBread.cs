@@ -1,40 +1,31 @@
 using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
+using Terraria.Enums;
+using Terraria.DataStructures;
 
-namespace CosmeticVariety.Items {
-public class RyeBread : ModItem
+namespace CosmeticVariety.Tiles {
+public class RyeBread : ModTile
 {
     public override void SetDefaults()
     {
-        item.width = 12;
-        item.height = 12;
-        item.maxStack = 999;
-        item.useTurn = true;
-        item.autoReuse = true;
-        item.useAnimation = 15;
-        item.useTime = 7;
-        item.useStyle = 2;
-		item.UseSound = SoundID.Item2;
-        item.consumable = true;
-		item.buffType = 26;
-        item.buffType = mod.BuffType("Energized");
-        item.buffTime = 45000;
+        Main.tileFrameImportant[Type] = true;
+        Main.tileNoAttach[Type] = true;
+        Main.tileLavaDeath[Type] = true;
+        TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
+		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.Table, TileObjectData.newTile.Width, 0);
+        TileObjectData.addTile(Type);
+		dustType = mod.DustType("Pixel");	
     }
-
-    public override void AddRecipes()
+    public override void NumDust(int i, int j, bool fail, ref int num)
     {
-        ModRecipe recipe = new ModRecipe(mod);
-        recipe.AddIngredient(null,"DecorativeRyeBread", 1);
-		recipe.AddTile(null,"SculptingStand");
-        recipe.SetResult(this, 1);
-        recipe.AddRecipe();
-		
-		recipe = new ModRecipe(mod);
-        recipe.AddIngredient(null,"Flour", 3);
-		recipe.AddTile(null,"Oven");
-        recipe.SetResult(this, 1);
-        recipe.AddRecipe();
+        num = fail ? 1 : 3;
+	}
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+    {
+        Item.NewItem(i * 16, j * 16, 32, 16, mod.ItemType("DecorativeRyeBread"));
     }
 }}

@@ -1,33 +1,34 @@
 using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 
-namespace CosmeticVariety.Items {
-public class SandstoneCandle : ModItem
+namespace CosmeticVariety.Tiles {
+public class SandstoneCandle : ModTile
 {
     public override void SetDefaults()
     {
-        item.width = 28;
-        item.height = 14;
-        item.maxStack = 99;
-        item.useTurn = true;
-        item.autoReuse = true;
-        item.useAnimation = 15;
-        item.useTime = 10;
-        item.useStyle = 1;
-        item.consumable = true;
-        item.value = 150;
-        item.createTile = mod.TileType("SandstoneCandle");
+        Main.tileFrameImportant[Type] = true;
+        Main.tileNoAttach[Type] = true;
+        Main.tileLavaDeath[Type] = true;
+		Main.tileLighted[Type] = true;
+        TileObjectData.newTile.CopyFrom(TileObjectData.StyleOnTable1x1);
+        TileObjectData.addTile(Type);
+		drop = mod.ItemType("SandstoneCandle");
+        AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
+		dustType = mod.DustType("Pixel");
+		adjTiles = new int[]{TileID.Candles};
     }
-
-    public override void AddRecipes()
+    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
     {
-        ModRecipe recipe = new ModRecipe(mod);
-        recipe.AddIngredient(ItemID.Sandstone, 4);
-		recipe.AddIngredient(ItemID.Torch, 1);
-		recipe.AddTile(18);
-        recipe.SetResult(this);
-        recipe.AddRecipe();
+        r = 1.2f;
+        g = 1.2f;
+        b = 1.0f;
+    }
+    public override void NumDust(int i, int j, bool fail, ref int num)
+    {
+        num = fail ? 1 : 3;
     }
 }}

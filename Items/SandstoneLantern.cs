@@ -1,33 +1,42 @@
 using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
+using Terraria.DataStructures;
+using Terraria.Enums;
 
-namespace CosmeticVariety.Items {
-public class SandstoneLantern : ModItem
+namespace CosmeticVariety.Tiles {
+public class SandstoneLantern : ModTile
 {
     public override void SetDefaults()
     {
-        item.width = 28;
-        item.height = 14;
-        item.maxStack = 99;
-        item.useTurn = true;
-        item.autoReuse = true;
-        item.useAnimation = 15;
-        item.useTime = 10;
-        item.useStyle = 1;
-        item.consumable = true;
-        item.value = 150;
-        item.createTile = mod.TileType("SandstoneLantern");
+        Main.tileFrameImportant[Type] = true;
+        Main.tileNoAttach[Type] = true;
+        Main.tileLavaDeath[Type] = true;
+		Main.tileLighted[Type] = true;
+        TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
+		TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile, TileObjectData.newTile.Width, 0);
+		TileObjectData.newTile.AnchorBottom = default(AnchorData);
+        TileObjectData.addTile(Type);
+        AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
+		dustType = mod.DustType("Pixel");
+		adjTiles = new int[]{TileID.HangingLanterns};
+    }
+    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+    {
+        r = 1.2f;
+        g = 1.2f;
+        b = 1.0f;
+    }
+    public override void NumDust(int i, int j, bool fail, ref int num)
+    {
+        num = fail ? 1 : 3;
     }
 
-    public override void AddRecipes()
+    public override void KillMultiTile(int i, int j, int frameX, int frameY)
     {
-        ModRecipe recipe = new ModRecipe(mod);
-        recipe.AddIngredient(ItemID.Sandstone, 4);
-		recipe.AddIngredient(ItemID.Torch, 1);
-		recipe.AddTile(18);
-        recipe.SetResult(this);
-        recipe.AddRecipe();
+        Item.NewItem(i * 16, j * 16, 16, 32, mod.ItemType("SandstoneLantern"));
     }
 }}
